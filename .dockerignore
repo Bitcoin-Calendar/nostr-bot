@@ -1,0 +1,24 @@
+# Git directory
+.git/
+
+# IDE and OS specific
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local environment files
+.env
+
+# Log files and directories
+*.log
+logs/
+
+# Metrics files and directories (if generated locally)
+metrics/
+
+# Local build artifacts
+nostr_bot
+
+# Temporary files/folders
+tmp/ 

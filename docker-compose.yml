@@ -1,0 +1,61 @@
+services:
+  nostr-bot-en:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nostr-bot-en
+    command: ["./nostr_bot", "NOSTR_PRIVATE_KEY_EN"]
+    env_file:
+      - .env
+    volumes:
+      - ./logs:/app/logs
+      - ./metrics-logs:/app/metrics-logs
+    restart: 'no'
+    environment:
+      - BOT_PROCESSING_LANGUAGE=en
+      - NOSTR_RELAYS=${NOSTR_RELAYS}
+      - BOT_API_ENDPOINT=${BOT_API_ENDPOINT}
+      - BOT_API_KEY=${BOT_API_KEY}
+      - NOSTR_PRIVATE_KEY_EN=${NOSTR_PRIVATE_KEY_EN}
+      - LOG_DIR=${LOG_DIR:-./logs}
+      - BOT_LOG_LEVEL=${BOT_LOG_LEVEL:-info}
+      - CONSOLE_LOG=${CONSOLE_LOG:-false}
+      - DEBUG=${DEBUG:-false}
+    labels:
+      - "logging.loki.app=calendar-bot"
+    networks:
+      - default
+      - monitoring-net
+
+  nostr-bot-en-test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nostr-bot-en-test
+    command: ["./nostr_bot", "NOSTR_PRIVATE_KEY_ENT"]
+    env_file:
+      - .env
+    volumes:
+      - ./logs:/app/logs
+      - ./metrics-logs:/app/metrics-logs
+    restart: 'no'
+    environment:
+      - BOT_PROCESSING_LANGUAGE=en
+      - NOSTR_RELAYS=${NOSTR_RELAYS}
+      - BOT_API_ENDPOINT=${BOT_API_ENDPOINT}
+      - BOT_API_KEY=${BOT_API_KEY}
+      - NOSTR_PRIVATE_KEY_ENT=${NOSTR_PRIVATE_KEY_ENT}
+      - LOG_DIR=${LOG_DIR:-./logs}
+      - BOT_LOG_LEVEL=${BOT_LOG_LEVEL:-debug}
+      - CONSOLE_LOG=${CONSOLE_LOG:-true}
+      - DEBUG=${DEBUG:-true}
+    labels:
+      - "logging.loki.app=calendar-bot-test"
+    networks:
+      - default
+      - monitoring-net
+
+networks:
+  monitoring-net:
+    external:
+      name: monitoring_monitoring-net
