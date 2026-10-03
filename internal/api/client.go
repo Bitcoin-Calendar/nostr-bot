@@ -66,10 +66,9 @@ func (c *Client) FetchEvents(month string, day string, language string) ([]model
 			continue
 		}
 
-		defer resp.Body.Close()
-
 		if resp.StatusCode != http.StatusOK {
 			bodyBytes, _ := ioutil.ReadAll(resp.Body)
+			resp.Body.Close()
 			lastErr = fmt.Errorf("API request failed with status code %d on attempt %d: %s", resp.StatusCode, i+1, string(bodyBytes))
 			log.Warn().Err(lastErr).Int("attempt", i+1).Int("maxRetries", c.Retries).Int("statusCode", resp.StatusCode).Msg("API request non-OK status, retrying...")
 			// For certain status codes (e.g., 4xx client errors), retrying might not be useful.
@@ -79,6 +78,7 @@ func (c *Client) FetchEvents(month string, day string, language string) ([]model
 		}
 
 		body, err := ioutil.ReadAll(resp.Body)
+		resp.Body.Close()
 		if err != nil {
 			// This error is less likely to be transient, but we'll retry based on current loop structure
 			lastErr = fmt.Errorf("failed to read API response body on attempt %d: %w", i+1, err)
@@ -93,7 +93,10 @@ func (c *Client) FetchEvents(month string, day string, language string) ([]model
 			return nil, fmt.Errorf("failed to unmarshal API response body: %w", err)
 		}
 
-		return apiResponse.Events, nil // Return the slice of events from the wrapper
+		if apiResponse.Events == nil {
+			return nil, fmt.Errorf("API response must contain an events array")
+		}
+		return apiResponse.Events, nil
 	}
 
 	// If loop finishes, all retries failed

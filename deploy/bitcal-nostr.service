@@ -1,0 +1,22 @@
+[Unit]
+Description=Bitcoin Calendar daily English Nostr notes (kind 1 only)
+After=network-online.target bitcal-api.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=bitcal
+Group=bitcal
+WorkingDirectory=/srv/bitcal/bots/nostr
+EnvironmentFile=/etc/bitcal/nostr-bot.env
+ExecStart=/srv/bitcal/bots/nostr/nostr_bot
+StateDirectory=bitcal-nostr
+StateDirectoryMode=0700
+UMask=0077
+Restart=no
+TimeoutStartSec=6h
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6

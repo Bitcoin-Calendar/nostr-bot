@@ -53,20 +53,18 @@ RUN touch /app/.env
 
 # Create directories for logs and metrics and set ownership
 RUN mkdir -p /app/logs && chown appuser:appgroup /app/logs
-RUN mkdir -p /app/metrics && chown appuser:appgroup /app/metrics
+RUN mkdir -p /app/metrics /app/state && chown appuser:appgroup /app/metrics /app/state
 
 # Switch to the non-root user
 USER appuser
 
 # Set default environment variables.
 # These can be overridden at runtime (docker run -e ...).
+ENV BOT_STATE_DIR="/app/state"
 ENV LOG_DIR="/app/logs"
 ENV LOG_LEVEL="info"
 # Example: you will need to pass the actual private key when running the container
-ENV NOSTR_PRIVATE_KEY_EN="your_english_specific_private_key_hex_goes_here_at_runtime"
 
-# Default command to run the application (e.g., for English events).
-# You can override this when running the container for different languages/keys.
-# For example, for Russian:
-# docker run -e NOSTR_PRIVATE_KEY_RU="..." your_image_name ./nostr_bot events_ru.csv NOSTR_PRIVATE_KEY_RU
-CMD ["./nostr_bot", "NOSTR_PRIVATE_KEY_ENT"] 
+
+# Environment is provided by the operator. No positional key-name argument.
+CMD ["./nostr_bot"]

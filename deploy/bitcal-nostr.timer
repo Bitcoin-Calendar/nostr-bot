@@ -1,0 +1,11 @@
+[Unit]
+Description=Bitcoin Calendar Nostr at 08:00 New York time
+
+[Timer]
+OnCalendar=*-*-* 08:00:00 America/New_York
+AccuracySec=1min
+Persistent=false
+Unit=bitcal-nostr.service
+
+[Install]
+WantedBy=timers.target
