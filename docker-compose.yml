@@ -4,15 +4,17 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: nostr-bot-en
-    command: ["./nostr_bot", "NOSTR_PRIVATE_KEY_EN"]
+    command: ["./nostr_bot"]
     env_file:
       - .env
     volumes:
       - ./logs:/app/logs
       - ./metrics-logs:/app/metrics-logs
+      - ./state:/app/state
     restart: 'no'
     environment:
       - BOT_PROCESSING_LANGUAGE=en
+      - BOT_STATE_DIR=/app/state
       - NOSTR_RELAYS=${NOSTR_RELAYS}
       - BOT_API_ENDPOINT=${BOT_API_ENDPOINT}
       - BOT_API_KEY=${BOT_API_KEY}
@@ -32,19 +34,21 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: nostr-bot-en-test
-    command: ["./nostr_bot", "NOSTR_PRIVATE_KEY_ENT"]
+    command: ["./nostr_bot"]
     env_file:
       - .env
     volumes:
       - ./logs:/app/logs
       - ./metrics-logs:/app/metrics-logs
+      - ./state:/app/state
     restart: 'no'
     environment:
       - BOT_PROCESSING_LANGUAGE=en
+      - BOT_STATE_DIR=/app/state
       - NOSTR_RELAYS=${NOSTR_RELAYS}
       - BOT_API_ENDPOINT=${BOT_API_ENDPOINT}
       - BOT_API_KEY=${BOT_API_KEY}
-      - NOSTR_PRIVATE_KEY_ENT=${NOSTR_PRIVATE_KEY_ENT}
+      - NOSTR_PRIVATE_KEY_EN=${NOSTR_PRIVATE_KEY_ENT}
       - LOG_DIR=${LOG_DIR:-./logs}
       - BOT_LOG_LEVEL=${BOT_LOG_LEVEL:-debug}
       - CONSOLE_LOG=${CONSOLE_LOG:-true}

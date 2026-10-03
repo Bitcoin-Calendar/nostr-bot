@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 )
 
@@ -16,18 +17,20 @@ type APIEvent struct {
 	References  []string  `json:"References"`
 	Hashtags    []string  `json:"hashtags"`
 	Olas        bool      `json:"olas"`
+	URLPath     string    `json:"url_path"`
 }
 
 // apiEventRaw is an intermediate struct for unmarshalling.
 type apiEventRaw struct {
-	ID          uint      `json:"ID"`
-	Date        time.Time `json:"Date"`
-	Title       string    `json:"Title"`
-	Description string    `json:"Description"`
-	Tags        string    `json:"Tags"`
-	Media       string    `json:"Media"`
-	References  string    `json:"References"`
-	Olas        bool      `json:"olas"`
+	ID          uint   `json:"ID"`
+	Date        string `json:"Date"`
+	Title       string `json:"Title"`
+	Description string `json:"Description"`
+	Tags        string `json:"Tags"`
+	Media       string `json:"Media"`
+	References  string `json:"References"`
+	Olas        bool   `json:"olas"`
+	URLPath     string `json:"url_path"`
 }
 
 // UnmarshalJSON provides custom unmarshalling logic for APIEvent.
@@ -38,8 +41,17 @@ func (ae *APIEvent) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
+	date, err := time.Parse("2006-01-02", raw.Date)
+	if err != nil {
+		return fmt.Errorf("invalid event date: %w", err)
+	}
+	if raw.ID == 0 {
+		return fmt.Errorf("event id must be positive")
+	}
+	*ae = APIEvent{}
 	ae.ID = raw.ID
-	ae.Date = raw.Date
+	ae.Date = date
+	ae.URLPath = raw.URLPath
 	ae.Title = raw.Title
 	ae.Description = raw.Description
 	ae.Tags = raw.Tags
